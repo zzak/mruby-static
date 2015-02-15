@@ -28,7 +28,7 @@ end
 
 desc "cleanup"
 task :clean do
-  `rm -rf #{STATIC_ROOT}/bin/static`
+  `rm #{STATIC_ROOT}/bin/static`
   `cd #{MRUBY_ROOT} && rake deep_clean`
 end
 
