@@ -1,5 +1,6 @@
 STATIC_ROOT=ENV["STATIC_ROOT"] || Dir.pwd
 MRUBY_ROOT=ENV["MRUBY_ROOT"] || "#{STATIC_ROOT}/mruby"
+MRUBY_CONFIG=ENV["MRUBY_CONFIG"] || "#{STATIC_ROOT}/build_config.rb"
 INSTALL_PREFIX=ENV["INSTALL_PREFIX"] || "#{STATIC_ROOT}/build"
 MRUBY_VERSION=ENV["MRUBY_VERSION"] || "1.1.0"
 
@@ -11,13 +12,13 @@ end
 
 desc "compile binary"
 task :compile => :mruby do
-  `cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{STATIC_ROOT}/build_config.rb ruby minirake`
+  `cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} ruby minirake`
   `cp -p #{MRUBY_ROOT}/bin/mruby bin/static`
 end
 
 desc "test"
 task :test => :compile do
-  system "cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{STATIC_ROOT}/build_config.rb ruby minirake test"
+  system "cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} ruby minirake test"
 end
 
 desc "install"
