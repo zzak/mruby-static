@@ -1,5 +1,7 @@
 # Static HTML Site Generator
 
+[![Build Status](https://travis-ci.org/zzak/mruby-static.svg)](https://travis-ci.org/zzak/mruby-static)
+
 A simple, static, HTML site generator inspired by Jekyll.
 
 ## Features
