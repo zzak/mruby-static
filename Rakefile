@@ -30,7 +30,7 @@ end
 desc "cleanup"
 task :clean do
   `rm #{STATIC_ROOT}/bin/static`
-  `cd #{MRUBY_ROOT} && rake deep_clean`
+  `cd #{MRUBY_ROOT} && ruby minirake deep_clean`
 end
 
 task :default => :test
