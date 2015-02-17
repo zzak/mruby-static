@@ -13,7 +13,7 @@ end
 desc "compile binary"
 task :compile => :mruby do
   `cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} ruby minirake`
-  `cp -p #{MRUBY_ROOT}/bin/mruby bin/static`
+  `cp -p #{MRUBY_ROOT}/bin/mruby #{STATIC_ROOT}/bin/static`
 end
 
 desc "test"
@@ -24,7 +24,7 @@ end
 desc "install"
 task :install => :compile do
   `mkdir -p #{INSTALL_PREFIX}/bin`
-  `cp #{STATIC_ROOT}/bin/static #{INSTALL_PREFIX}/bin/.`
+  `cp -p #{STATIC_ROOT}/bin/static #{INSTALL_PREFIX}/bin/.`
 end
 
 desc "cleanup"
