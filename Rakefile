@@ -12,13 +12,13 @@ end
 
 desc "compile binary"
 task :compile => :mruby do
-  `cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} ruby minirake`
+  `cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} rake all`
   `cp -p #{MRUBY_ROOT}/bin/mruby #{STATIC_ROOT}/bin/static`
 end
 
 desc "test"
 task :test => :compile do
-  system "cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} ruby minirake test"
+  system "cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} rake all test"
 end
 
 desc "install"
