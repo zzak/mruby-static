@@ -27,13 +27,25 @@ module Static
     end
   end
 
+  def self.help!
+    puts <<-EOS
+mruby-static:
+  preview, preview:run to preview your site
+  post:new to create a new post
+    EOS
+  end
+
   def self.configure(options={}, &block)
     self.configuration ||= Configuration.new(options)
     yield(configuration)
   end
 
   def self.start
-    parse_command!
+    begin
+      parse_command!
+    rescue
+      help!
+    end
   end
 
   class Post
