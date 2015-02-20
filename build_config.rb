@@ -8,6 +8,8 @@ MRuby::Build.new do |conf|
 
   enable_debug
 
+  conf.gembox 'default'
+
   conf.gem :github => 'iij/mruby-io'
   #conf.gem :github => 'iij/mruby-dir'
   conf.gem :github => 'iij/mruby-pack'
