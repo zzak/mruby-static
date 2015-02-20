@@ -18,7 +18,7 @@ end
 
 desc "test"
 task :test => :compile do
-  system "cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} rake all test"
+  sh "cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} rake all test"
 end
 
 desc "install"
