@@ -56,6 +56,9 @@ mruby-static:
 
   class Preview
     def initialize
+      url = "#{Static.configuration.host}:#{Static.configuration.port}"
+      puts "Starting preview at #{url}"
+
       @server = SimpleHttpServer.new({
         :server_ip => Static.configuration.host,
         :port  => Static.configuration.port,
