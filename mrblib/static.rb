@@ -43,7 +43,7 @@ mruby-static:
   def self.start
     begin
       parse_command!
-    rescue
+    rescue ArgumentError
       help!
     end
   end
