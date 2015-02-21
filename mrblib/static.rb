@@ -17,7 +17,7 @@ module Static
     private
     def parse_command!
       command = ARGV.shift
-      if command =~ /+w\:+w/
+      if command =~ /\w+:\w+/
         klass, action = command.split(":")
       else
         raise "unknown command."
