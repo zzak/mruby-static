@@ -37,7 +37,7 @@ mruby-static:
 
   def self.configure(options={}, &block)
     self.configuration ||= Configuration.new(options)
-    yield(configuration)
+    yield(configuration) if block_given?
   end
 
   def self.start

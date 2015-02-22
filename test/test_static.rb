@@ -41,9 +41,27 @@ assert('Modify Configuration using accessors') do
   config.root === "/foo"
 end
 
-assert('configure using block') do
+assert('default configuration with block') do
   Static.configure do
   end
+
+  Static.configuration.site_name === "Static HTML Site"
+  Static.configuration.pid === nil
+  Static.configuration.host === "0.0.0.0"
+  Static.configuration.port === "8000"
+  Static.configuration.root === "./"
+end
+
+assert('default configuration') do
+  Static.configuration.site_name === "Static HTML Site"
+  Static.configuration.pid === nil
+  Static.configuration.host === "0.0.0.0"
+  Static.configuration.port === "8000"
+  Static.configuration.root === "./"
+end
+
+assert('default configuration without block') do
+  Static.configure
 
   Static.configuration.site_name === "Static HTML Site"
   Static.configuration.pid === nil
