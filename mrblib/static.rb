@@ -73,11 +73,17 @@ mruby-static:
     end
 
     private
-    # TODO: multiple locations
+    def locations
+      @routes ||= Dir.entries(Static.configuration.root).select do |file|
+        file =~ /.+.md/
+      end
+    end
+
     def build!
-      ["README.md"].each do |file|
+      locations.each do |file|
         define_location(file) do
-          File.read(file)
+          path = File.expand_path(Static.configuration.root + file)
+          File.read(path)
         end
       end
 

@@ -11,7 +11,7 @@ MRuby::Build.new do |conf|
   conf.gembox 'default'
 
   conf.gem :github => 'iij/mruby-io'
-  #conf.gem :github => 'iij/mruby-dir'
+  conf.gem :github => 'iij/mruby-dir'
   conf.gem :github => 'iij/mruby-pack'
   conf.gem :github => 'iij/mruby-socket'
 
