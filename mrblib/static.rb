@@ -104,15 +104,16 @@ mruby-static:
   end
 
   class Template
-    def initialize *args
-      @renderer = Discount.new(*args)
+    def initialize(css_path="/static.ss", title="Static HTML Site Generator")
+      @renderer = ::Discount.new(css_path, title)
     end
 
     def render &block
-      output = ""
+      output = []
       output << @renderer.header
-      output << yield
+      output << yield if block_given?
       output << @renderer.footer
+      output.join("")
     end
   end
 
