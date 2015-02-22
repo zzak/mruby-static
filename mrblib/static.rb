@@ -64,6 +64,7 @@ mruby-static:
         :port  => Static.configuration.port,
         :document_root => Static.configuration.root,
       })
+
       build!
     end
 
