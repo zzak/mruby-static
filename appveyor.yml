@@ -1,6 +1,7 @@
 version: "#{build}"
 install:
   - cmd: cinst wget -x86
+  - cmd: cinst 7zip -x86
   - gem install rake
 build_script:
   - rake test
