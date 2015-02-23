@@ -5,10 +5,8 @@ INSTALL_PREFIX=ENV["INSTALL_PREFIX"] || "#{STATIC_ROOT}/build"
 MRUBY_VERSION=ENV["MRUBY_VERSION"] || "1.1.0"
 
 file :mruby do # :nodoc:
-  sh "wget --no-check-certificate https://github.com/mruby/mruby/archive/#{MRUBY_VERSION}.tar.gz"
-  sh "tar -xvzf #{MRUBY_VERSION}.tar.gz"
-  sh "rm #{MRUBY_VERSION}.tar.gz"
-  sh "mv mruby-#{MRUBY_VERSION} mruby"
+  sh "wget --no-check-certificate https://github.com/mruby/mruby/archive/#{MRUBY_VERSION}.tar.gz -O mruby.tar.gz"
+  sh "tar -xvzf mruby.tar.gz"
 end
 
 desc "compile binary"
