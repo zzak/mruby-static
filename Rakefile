@@ -6,7 +6,8 @@ MRUBY_VERSION=ENV["MRUBY_VERSION"] || "1.1.0"
 
 file :mruby do # :nodoc:
   sh "wget -q --no-check-certificate https://github.com/mruby/mruby/archive/#{MRUBY_VERSION}.tar.gz"
-  sh "tar -xvzf #{MRUBY_VERSION}.tar.gz && rm #{MRUBY_VERSION}.tar.gz"
+  sh "tar -xvzf #{MRUBY_VERSION}.tar.gz"
+  sh "rm #{MRUBY_VERSION}.tar.gz"
   sh "mv mruby-#{MRUBY_VERSION} mruby"
 end
 
