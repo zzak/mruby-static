@@ -5,7 +5,7 @@ install:
   - cmd: cinst wget -x86
   - cmd: cinst 7zip -x86
   - gem install rake
-before_script:
+before_build:
   - rake mruby
 build_script:
   - cd mruby
