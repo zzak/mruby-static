@@ -1,0 +1,10 @@
+version: "#{build}"
+install:
+  - gem install rake
+build_script:
+  - rake test
+notifications:
+  - provider: Email
+    to: email@zzak.io
+    on_build_status_changed: true
+
