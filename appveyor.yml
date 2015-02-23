@@ -1,10 +1,15 @@
 version: "#{build}"
+environment:
+  - MRUBY_CONFIG: "C:/projects/mruby-static/build_config.rb"
 install:
   - cmd: cinst wget -x86
   - cmd: cinst 7zip -x86
   - gem install rake
+before_script:
+  - rake mruby
 build_script:
-  - rake test
+  - cd mruby
+  - rake all test
 notifications:
   - provider: Email
     to: email@zzak.io
