@@ -1,6 +1,6 @@
 version: "#{build}"
 environment:
-  - MRUBY_CONFIG: "C:/projects/mruby-static/build_config.rb"
+  MRUBY_CONFIG: "C:/projects/mruby-static/build_config.rb"
 install:
   - cmd: cinst wget -x86
   - cmd: cinst 7zip -x86
