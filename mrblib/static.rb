@@ -81,23 +81,17 @@ mruby-static:
 
     def build!
       locations.each do |file|
-        define_location(file) do
+        @server.location "/#{file}" do |res|
+          document = Document.new
           path = File.expand_path(Static.configuration.root + file)
-          File.read(path)
+          document.body = File.read(path)
+          @server.response_body = document.to_html
+          @server.create_response
         end
       end
 
       @server.location("/static.css") do |res|
         @server.response_body = File.read("public/static.css")
-        @server.create_response
-      end
-    end
-
-    def define_location file, &block
-      @server.location "/#{file}" do |res|
-        document = Document.new
-        document.body = yield
-        @server.response_body = document.to_html
         @server.create_response
       end
     end
