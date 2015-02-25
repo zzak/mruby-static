@@ -4,6 +4,7 @@ environment:
 install:
   - cmd: cinst wget -x86
   - cmd: cinst 7zip -x86
+  - cmd: cinst mingw
   - gem install rake
 before_build:
   - rake mruby
