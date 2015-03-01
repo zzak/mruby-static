@@ -49,8 +49,16 @@ mruby-static:
   end
 
   class Post
+    attr_accessor :document
+
     def new
-      raise NotImplementedError
+      @document = Document.new
+      @document.author = "Your name here."
+      @document.body = "Your content here."
+      @document.publish_date = Time.now
+      @document.title = ARGV.shift
+
+      @document.save!
     end
   end
 
@@ -125,7 +133,7 @@ mruby-static:
   end
 
   class Document
-    attr_accessor :author, :publish_date, :title, :body
+    attr_accessor :author, :publish_date, :title, :body, :path, :filename
 
     def initialize
       @publish_date = Time.now
@@ -138,6 +146,20 @@ mruby-static:
     def to_html
       "" << @template.render do
         body.to_html
+      end
+    end
+
+    def path
+      @path ||= File.expand_path(Static.configuration.root + filename)
+    end
+
+    def filename
+      @filename ||= @title.gsub(' ', '_')
+    end
+
+    def save!
+      File.open("#{path}.md", 'w+') do |file|
+        file.write body
       end
     end
   end
