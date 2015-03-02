@@ -54,9 +54,7 @@ mruby-static:
 
     def new
       @document = Document.new
-      @document.author = "Your name here."
       @document.body = "Your content here."
-      @document.publish_date = Time.now
       @document.title = ARGV.shift
 
       @document.save!
@@ -94,7 +92,8 @@ mruby-static:
       end
 
       @server.location("/static.css") do |res|
-        @server.response_body = File.read("public/static.css")
+        path = File.expand_path(Static.configuration.root = "static.css")
+        @server.response_body = File.read(path)
         @server.create_response
       end
     end
@@ -156,10 +155,9 @@ mruby-static:
   end
 
   class Document
-    attr_accessor :author, :publish_date, :title, :body, :path, :filename
+    attr_accessor :title, :body, :path, :filename
 
     def initialize
-      @publish_date = Time.now
       @template = Template.new(
         "static.css",
         Static.configuration.site_name
