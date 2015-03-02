@@ -113,7 +113,7 @@ mruby-static:
     attr_accessor :css, :documents, :routes
 
     def self.css
-      @css ||= File.read(root_dir + "/#{Static.configuration.css}")
+      @css ||= File.read(File.join(Static.configuration.root + Static.configuration.css))
     end
 
     def self.routes
@@ -152,9 +152,8 @@ mruby-static:
     end
 
     def generate_assets
-      css = File.join(Static.configuration.root, "/static.css")
       path = File.join(Static.configuration.output, "/static.css")
-      File.open(path, 'w+') { |file| file.write(File.read(css)) }
+      File.open(path, 'w+') { |file| file.write(Site.css) }
     end
   end
 
