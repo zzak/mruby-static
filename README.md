@@ -14,14 +14,14 @@ A simple, static, HTML site generator inspired by Jekyll.
 
 ## Getting Started
 
-1. Download the source: `git clone git://github.com/zzak/static.git`
+1. Download the source: `git clone git://github.com/zzak/mruby-static.git`
 
-2. Install it: `rake install`
+2. Install it: `rake compile`
 
-3. Generate a post: `bin/static post:new "The Title Of My Post"`
+3. Generate a post: `bin/static site.rb post:new "The Title Of My Post"`
 
-4. Preview your site: `bin/static preview`
+4. Preview your site: `bin/static site.rb preview:run`
 
 ## License
 
-Static is released under the [MIT License](http://www.opensource.org/licenses/MIT).
+mruby-static is released under the [MIT License](http://www.opensource.org/licenses/MIT).
