@@ -1,6 +1,6 @@
 module Static
   class Configuration
-    attr_accessor :site_name, :pid, :host, :port, :root
+    attr_accessor :site_name, :pid, :host, :port, :root, :output
 
     def initialize(options={})
       @site_name = "Static HTML Site"
@@ -8,6 +8,7 @@ module Static
       @host = "0.0.0.0"
       @port = "8000"
       @root = "./"
+      @output = "output/"
     end
   end
 
@@ -81,17 +82,11 @@ mruby-static:
     end
 
     private
-    def locations
-      @routes ||= Dir.entries(Static.configuration.root).select do |file|
-        file =~ /.+.md/
-      end
-    end
-
     def build!
-      locations.each do |file|
-        @server.location "/#{file}" do |res|
+      Site.routes.each do |route|
+        @server.location "/#{route}" do |res|
           document = Document.new
-          path = File.expand_path(Static.configuration.root + file)
+          path = File.expand_path(Static.configuration.root + route)
           document.body = File.read(path)
           @server.response_body = document.to_html
           @server.create_response
@@ -106,7 +101,7 @@ mruby-static:
   end
 
   class Template
-    def initialize(css_path="/static.ss", title="Static HTML Site Generator")
+    def initialize(css_path="static.css", title="Static HTML Site Generator")
       @renderer = ::Discount.new(css_path, title)
     end
 
@@ -119,16 +114,44 @@ mruby-static:
     end
   end
 
-  # TODO: generation
-  class Generator
-    def self.generate
-      document = Document.new
-      document.author = "zzak"
-      document.publish_date = Date.new
-      document.title = "My First Post"
-      document.body = "This is the content"
+  class Site
+    attr_accessor :routes
 
-      document.to_html
+    def self.routes
+      @routes ||= Dir.entries(Static.configuration.root).select do |file|
+        file =~ /.+.md/
+      end
+    end
+  end
+
+  class Generate
+    def site
+      Dir.mkdir(Static.configuration.output)
+
+      generate_posts
+      generate_assets
+    end
+
+    def generate_posts
+      Site.routes.each do |route|
+        document = Document.new
+        path = File.expand_path(Static.configuration.root + route)
+        document.body = File.read(path)
+
+        output = File.expand_path(Static.configuration.output + route)
+        File.open(output.gsub('.md', '.html'), 'w+') do |file|
+          file.write document.to_html
+        end
+      end
+    end
+
+    def generate_assets
+      css = File.read File.expand_path(Static.configuration.root + "static.css")
+      path = File.expand_path(Static.configuration.output + "static.css")
+
+      File.open(path, 'w+') do |file|
+        file.write css
+      end
     end
   end
 
@@ -138,7 +161,7 @@ mruby-static:
     def initialize
       @publish_date = Time.now
       @template = Template.new(
-        "/static.css",
+        "static.css",
         Static.configuration.site_name
       )
     end
