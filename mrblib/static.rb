@@ -1,6 +1,6 @@
 module Static
   class Configuration
-    attr_accessor :site_name, :pid, :host, :port, :root, :output
+    attr_accessor :site_name, :pid, :host, :port, :root, :output, :css_url
 
     def initialize(options={})
       @site_name = "Static HTML Site"
@@ -9,6 +9,7 @@ module Static
       @port = "8000"
       @root = "./"
       @output = "output/"
+      @css_url = "static.css"
     end
   end
 
@@ -100,8 +101,8 @@ mruby-static:
   end
 
   class Template
-    def initialize(css_path="static.css", title="Static HTML Site Generator")
-      @renderer = ::Discount.new(css_path, title)
+    def initialize
+      @renderer = ::Discount.new(Static.configuration.css_url, Static.configuration.site_name)
     end
 
     def render &block
@@ -158,10 +159,7 @@ mruby-static:
     attr_accessor :title, :body, :path, :filename
 
     def initialize
-      @template = Template.new(
-        "static.css",
-        Static.configuration.site_name
-      )
+      @template = Template.new
     end
 
     def to_html
