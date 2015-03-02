@@ -113,7 +113,7 @@ mruby-static:
     attr_accessor :css, :documents, :routes
 
     def self.css
-      @css ||= File.read(File.join(Static.configuration.root + Static.configuration.css))
+      @css ||= File.read(File.join(Static.configuration.root, Static.configuration.css))
     end
 
     def self.routes
