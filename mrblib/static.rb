@@ -85,8 +85,7 @@ mruby-static:
       Site.routes.each do |route|
         @server.location "/#{route}" do |res|
           document = Document.new
-          path = File.expand_path(Static.configuration.root + route)
-          document.body = File.read(path)
+          document.body = File.read(Site.root + route)
           @server.response_body = document.to_html
           @server.create_response
         end
@@ -115,18 +114,26 @@ mruby-static:
   end
 
   class Site
-    attr_accessor :routes
+    attr_accessor :output_dir, :root_dir, :routes
 
     def self.routes
       @routes ||= Dir.entries(Static.configuration.root).select do |file|
         file =~ /.+.md/
       end
     end
+
+    def self.output_dir
+      @output_dir ||= File.expand_path(Static.configuration.output)
+    end
+
+    def self.root_dir
+      @root_dir ||= File.expand_path(Static.configuration.root)
+    end
   end
 
   class Generate
     def site
-      Dir.mkdir(Static.configuration.output)
+      Dir.mkdir(Site.output_dir)
 
       generate_posts
       generate_assets
@@ -135,10 +142,9 @@ mruby-static:
     def generate_posts
       Site.routes.each do |route|
         document = Document.new
-        path = File.expand_path(Static.configuration.root + route)
-        document.body = File.read(path)
+        document.body = File.read(Site.root_dir + route)
 
-        output = File.expand_path(Static.configuration.output + route)
+        output =  Site.output_dir + route
         File.open(output.gsub('.md', '.html'), 'w+') do |file|
           file.write document.to_html
         end
@@ -146,8 +152,8 @@ mruby-static:
     end
 
     def generate_assets
-      css = File.read File.expand_path(Static.configuration.root + "static.css")
-      path = File.expand_path(Static.configuration.output + "static.css")
+      css = File.read(Site.root_dir + "static.css")
+      path = Site.output_dir + "static.css"
 
       File.open(path, 'w+') do |file|
         file.write css
@@ -169,7 +175,7 @@ mruby-static:
     end
 
     def path
-      @path ||= File.expand_path(Static.configuration.root + filename)
+      @path ||= Site.root_dir + filename
     end
 
     def filename
