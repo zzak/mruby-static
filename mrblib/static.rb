@@ -92,7 +92,7 @@ mruby-static:
       end
 
       @server.location("/static.css") do |res|
-        path = File.expand_path(Static.configuration.root = "static.css")
+        path = File.expand_path(Static.configuration.root + "static.css")
         @server.response_body = File.read(path)
         @server.create_response
       end

@@ -1,4 +1,6 @@
 assert('Static::Template') do
+  Static.configure
+
   template = Static::Template.new
   body = "<h1>phew</h1>"
 
@@ -7,8 +9,8 @@ assert('Static::Template') do
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
-<title>Static HTML Site Generator</title>
-<link rel="stylesheet" href="/static.ss" type="text/css" />
+<title>Static HTML Site</title>
+<link rel="stylesheet" href="static.css" type="text/css" />
 </head>
 <body>
 <h1>phew</h1>
