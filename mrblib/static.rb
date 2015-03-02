@@ -1,6 +1,6 @@
 module Static
   class Configuration
-    attr_accessor :site_name, :pid, :host, :port, :root, :output, :css_url
+    attr_accessor :site_name, :pid, :host, :port, :root, :output, :css
 
     def initialize(options={})
       @site_name = "Static HTML Site"
@@ -9,7 +9,7 @@ module Static
       @port = "8000"
       @root = "./"
       @output = "output/"
-      @css_url = "static.css"
+      @css = "static.css"
     end
   end
 
@@ -70,7 +70,6 @@ mruby-static:
       @server = SimpleHttpServer.new({
         :server_ip => Static.configuration.host,
         :port  => Static.configuration.port,
-        :document_root => Static.configuration.root,
       })
 
       build!
@@ -84,16 +83,13 @@ mruby-static:
     def build!
       Site.routes.each do |route|
         @server.location "/#{route}" do |res|
-          document = Document.new
-          document.body = File.read(Site.root + route)
-          @server.response_body = document.to_html
+          @server.response_body = Site.documents[route].to_html
           @server.create_response
         end
       end
 
       @server.location("/static.css") do |res|
-        path = File.expand_path(Static.configuration.root + "static.css")
-        @server.response_body = File.read(path)
+        @server.response_body = Site.css
         @server.create_response
       end
     end
@@ -101,7 +97,7 @@ mruby-static:
 
   class Template
     def initialize
-      @renderer = ::Discount.new(Static.configuration.css_url, Static.configuration.site_name)
+      @renderer = ::Discount.new(Static.configuration.css, Static.configuration.site_name)
     end
 
     def render &block
@@ -114,7 +110,11 @@ mruby-static:
   end
 
   class Site
-    attr_accessor :output_dir, :root_dir, :routes
+    attr_accessor :css, :documents, :routes
+
+    def self.css
+      @css ||= File.read(root_dir + "/#{Static.configuration.css}")
+    end
 
     def self.routes
       @routes ||= Dir.entries(Static.configuration.root).select do |file|
@@ -122,42 +122,39 @@ mruby-static:
       end
     end
 
-    def self.output_dir
-      @output_dir ||= File.expand_path(Static.configuration.output)
-    end
-
-    def self.root_dir
-      @root_dir ||= File.expand_path(Static.configuration.root)
+    def self.documents
+      @documents ||= routes.inject({}) do |hash, route|
+        hash[route] = Document.new
+        path = File.join(Static.configuration.root, route)
+        hash[route].body = File.read(path)
+        hash
+      end
     end
   end
 
   class Generate
     def site
-      Dir.mkdir(Site.output_dir)
+      Dir.mkdir(Static.configuration.output) unless
+        Dir.exist?(Static.configuration.output)
 
       generate_posts
       generate_assets
     end
 
     def generate_posts
-      Site.routes.each do |route|
-        document = Document.new
-        document.body = File.read(Site.root_dir + route)
+      Site.documents.each do |key, value|
+        path = File.join(Static.configuration.output, key).gsub('.md', '.html')
 
-        output =  Site.output_dir + route
-        File.open(output.gsub('.md', '.html'), 'w+') do |file|
-          file.write document.to_html
+        File.open(path, 'w+') do |file|
+         file.write value.to_html
         end
       end
     end
 
     def generate_assets
-      css = File.read(Site.root_dir + "static.css")
-      path = Site.output_dir + "static.css"
-
-      File.open(path, 'w+') do |file|
-        file.write css
-      end
+      css = File.join(Static.configuration.root, "/static.css")
+      path = File.join(Static.configuration.output, "/static.css")
+      File.open(path, 'w+') { |file| file.write(File.read(css)) }
     end
   end
 
@@ -175,7 +172,7 @@ mruby-static:
     end
 
     def path
-      @path ||= Site.root_dir + filename
+      @path ||= File.join(Static.configuration.root, filename)
     end
 
     def filename
