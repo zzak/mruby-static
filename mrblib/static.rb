@@ -158,7 +158,7 @@ mruby-static:
   end
 
   class Document
-    attr_accessor :title, :body, :path, :filename
+    attr_accessor :title, :body
 
     def initialize
       @template = Template.new
@@ -170,15 +170,8 @@ mruby-static:
       end
     end
 
-    def path
-      @path ||= File.join(Static.configuration.root, filename)
-    end
-
-    def filename
-      @filename ||= @title.gsub(' ', '_')
-    end
-
     def save!
+      path = File.join(Static.configuration.root, @title.gsub(' ', '_'))
       File.open("#{path}.md", 'w+') do |file|
         file.write body
       end
