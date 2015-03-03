@@ -13,6 +13,11 @@ module Static
     end
   end
 
+  def self.configure(options={}, &block)
+    self.configuration ||= Configuration.new(options)
+    yield(configuration) if block_given?
+  end
+
   class << self
     attr_accessor :configuration
 
@@ -35,11 +40,6 @@ mruby-static:
   preview, preview:run to preview your site
   post:new to create a new post
     EOS
-  end
-
-  def self.configure(options={}, &block)
-    self.configuration ||= Configuration.new(options)
-    yield(configuration) if block_given?
   end
 
   def self.start
@@ -97,7 +97,8 @@ mruby-static:
 
   class Template
     def initialize
-      @renderer = ::Discount.new(Static.configuration.css, Static.configuration.site_name)
+      @renderer = Discount.new(
+        Static.configuration.css, Static.configuration.site_name)
     end
 
     def render &block
@@ -113,7 +114,9 @@ mruby-static:
     attr_accessor :css, :documents, :routes
 
     def self.css
-      @css ||= File.read(File.join(Static.configuration.root, Static.configuration.css))
+      @css ||= File.read(
+        File.join(Static.configuration.root, Static.configuration.css)
+      )
     end
 
     def self.routes
