@@ -88,6 +88,12 @@ mruby-static:
         end
       end
 
+      @server.location("/index.html") do |res|
+        @server.set_response_headers "Content-type" => "text/html; charset=utf-8"
+        @server.response_body = Site.homepage
+        @server.create_response
+      end
+
       @server.location("/static.css") do |res|
         @server.response_body = Site.css
         @server.create_response
@@ -111,7 +117,18 @@ mruby-static:
   end
 
   class Site
-    attr_accessor :css, :documents, :routes
+    attr_accessor :css, :documents, :homepage, :routes
+
+    def self.homepage
+      @homepage ||= begin
+        doc = Document.new
+        doc.body = documents.map do |url, _|
+          url.gsub!(".md", ".html")
+          "[#{url}](#{url})"
+        end.join("")
+        doc.to_html
+      end
+    end
 
     def self.css
       @css ||= File.read(
@@ -140,8 +157,14 @@ mruby-static:
       Dir.mkdir(Static.configuration.output) unless
         Dir.exist?(Static.configuration.output)
 
+      generate_homepage
       generate_posts
       generate_assets
+    end
+
+    def generate_homepage
+      path = File.join(Static.configuration.output, "index.html")
+      File.open(path, 'w+') { |file| file.write(Site.homepage) }
     end
 
     def generate_posts
