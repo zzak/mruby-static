@@ -1,2 +1,5 @@
 build/
 mruby/
+output/
+src/
+bin/
