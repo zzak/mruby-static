@@ -8,7 +8,7 @@ file :mruby do
   sh "wget --no-check-certificate -O mruby.tar.gz https://github.com/mruby/mruby/archive/#{MRUBY_VERSION}.tar.gz"
   sh "tar -xvzf mruby.tar.gz"
   sh "rm mruby.tar.gz"
-  sh "mv mruby-#{MRUBY_VERSION} mruby"
+  sh "mv mruby-#{MRUBY_VERSION} #{MRUBY_ROOT}"
 end
 
 desc "compile binary"
