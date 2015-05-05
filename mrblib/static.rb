@@ -83,12 +83,14 @@ mruby-static:
     def build!
       Site.routes.each do |route|
         @server.location "/#{route}" do |res|
+          @server.set_response_headers "Content-type" => "text/html; charset=utf-8"
           @server.response_body = Site.documents[route].to_html
           @server.create_response
         end
       end
 
       @server.location("/static.css") do |res|
+        @server.set_response_headers "Content-type" => "text/css"
         @server.response_body = Site.css
         @server.create_response
       end
