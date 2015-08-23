@@ -6,8 +6,5 @@ before_install:
     - sudo apt-get -qq update
 install:
     - sudo apt-get -qq install ruby rake bison git
-#before_script:
-  #- git clone https://github.com/mruby/mruby.git
-  #- cd mruby
 script:
   - MRUBY_CONFIG=.travis_build_config.rb rake test
