@@ -1,6 +1,6 @@
 module Static
   class Configuration
-    attr_accessor :site_name, :pid, :host, :port, :root, :output, :css
+    attr_accessor :site_name, :pid, :host, :port, :root, :output, :css, :template_dir, :asset_dir
 
     def initialize(options={})
       @site_name = "Static HTML Site"
@@ -9,6 +9,8 @@ module Static
       @port = "8000"
       @root = "./"
       @output = "output/"
+      @template_dir = "templates/"
+      @asset_dir = "assets/"
       @css = "static.css"
     end
   end
@@ -110,17 +112,31 @@ mruby-static:
 
     def render &block
       output = []
+      output << Site.header
       output << @renderer.render(yield)
+      output << Site.footer
       output.join("")
     end
   end
 
   class Site
-    attr_accessor :css, :documents, :routes
+    attr_accessor :css, :documents, :routes, :header, :footer
 
     def self.css
       @css ||= File.read(
-        File.join(Static.configuration.root, Static.configuration.css)
+        File.join(Static.configuration.asset_dir, Static.configuration.css)
+      )
+    end
+
+    def self.header
+      @header ||= File.read(
+        File.join(Static.configuration.template_dir, "header.html")
+      )
+    end
+
+    def self.footer
+      @footer ||= File.read(
+        File.join(Static.configuration.template_dir, "footer.html")
       )
     end
 

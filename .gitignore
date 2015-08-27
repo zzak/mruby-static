@@ -3,4 +3,5 @@ mruby/
 output/
 src/
 bin/
+templates/
 site.rb
