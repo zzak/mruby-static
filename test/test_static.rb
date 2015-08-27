@@ -1,24 +1,3 @@
-assert('Static::Template') do
-  Static.configure
-
-  template = Static::Template.new
-  body = "<h1>phew</h1>"
-
-  template.render { body } === <<-EOS
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<title>Static HTML Site</title>
-<link rel="stylesheet" href="static.css" type="text/css" />
-</head>
-<body>
-<h1>phew</h1>
-</body>
-</html>
-EOS
-end
-
 assert('Static::Configuration') do
   config = Static::Configuration.new
   config.site_name === "Static HTML Site"
