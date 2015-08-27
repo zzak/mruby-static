@@ -1,4 +1,7 @@
 module Static
+  class FileMissing < StandardError; end
+  class PathMissing < StandardError; end
+
   class Configuration
     attr_accessor :site_name, :pid, :host, :port, :root, :output, :css, :template_dir, :asset_dir
 
@@ -36,7 +39,14 @@ module Static
     end
 
     def read_config!
+      raise FileMissing, "site.rb" unless File.exists?("site.rb")
       eval File.read("site.rb")
+    end
+
+    def check_paths!
+      raise PathMissing, "template_dir" unless Dir.exist?(Static.configuration.template_dir)
+      raise PathMissing, "asset_dir" unless Dir.exist?(Static.configuration.asset_dir)
+      raise PathMissing, "root dir" unless Dir.exist?(Static.configuration.root)
     end
   end
 
@@ -50,6 +60,7 @@ mruby-static:
 
   def self.start(argv)
     read_config!
+    check_paths!
 
     begin
       parse_command!(argv)
@@ -97,7 +108,7 @@ mruby-static:
         end
       end
 
-      @server.location("/static.css") do |res|
+      @server.location("/#{Static.configuration.css}") do |res|
         @server.set_response_headers "Content-type" => "text/css"
         @server.response_body = Site.css
         @server.create_response
@@ -123,21 +134,21 @@ mruby-static:
     attr_accessor :css, :documents, :routes, :header, :footer
 
     def self.css
-      @css ||= File.read(
-        File.join(Static.configuration.asset_dir, Static.configuration.css)
-      )
+      _path = File.join(Static.configuration.asset_dir, Static.configuration.css)
+      raise FileMissing, Static.configuration.css unless File.exists?(_path)
+      @css ||= File.read(_path)
     end
 
     def self.header
-      @header ||= File.read(
-        File.join(Static.configuration.template_dir, "header.html")
-      )
+      _path = File.join(Static.configuration.template_dir, "header.html")
+      raise FileMissing, _path unless File.exists?(_path)
+      @header ||= File.read(_path)
     end
 
     def self.footer
-      @footer ||= File.read(
-        File.join(Static.configuration.template_dir, "footer.html")
-      )
+      _path = File.join(Static.configuration.template_dir, "footer.html")
+      raise FileMissing, _path unless File.exists?(_path)
+      @footer ||= File.read(_path)
     end
 
     def self.routes
@@ -149,8 +160,9 @@ mruby-static:
     def self.documents
       @documents ||= routes.inject({}) do |hash, route|
         hash[route] = Document.new
-        path = File.join(Static.configuration.root, route)
-        hash[route].body = File.read(path)
+        _path = File.join(Static.configuration.root, route)
+        raise FileMissing, _path unless File.exists?(_path)
+        hash[route].body = File.read(_path)
         hash
       end
     end
