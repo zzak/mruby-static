@@ -14,15 +14,17 @@ A simple, static, HTML site generator inspired by Jekyll.
 
 ## Getting Started
 
-1. Download the source: `git clone git://github.com/zzak/mruby-static.git`
+1. Download the source: `git clone https://github.com/zzak/mruby-static`
 
-2. Install it with `rake`
+2. Build inside docker with `docker-compose run compile`
 
-3. Create a `site.rb` file (See below).
+3. Install binary to your PATH (i.e.: `mruby/build/<ARCH>/bin/mruby-static`)
 
-4. Generate a post: `bin/static site.rb post:new "The Title Of My Post"`
+4. Create a `site.rb` file (See below).
 
-5. Preview your site: `bin/static site.rb preview:run`
+5. Generate a post: `mruby-static post:new "The Title Of My Post"`
+
+6. Preview your site: `mruby-static preview:run`
 
 ## site.rb
 
@@ -32,15 +34,12 @@ This file is used to initialize Static and issue commands. For example:
 Static.configure do |config|
   config.site_name = "mruby-static"
   config.root = "src/"
+  config.asset_dir = "assets/"
+  config.template_dir = "templates/"
 end
-
-Static.start
 ```
 
-Any configuration here that is allowed, but the import thing to remember:
-You MUST call `Static.start`, or the CLI won't interpret any commands.
-
-Please see `Static::Configuration` class for more options.
+Please see `Static::Configuration` class for more config options.
 
 ## License
 
