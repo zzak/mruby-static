@@ -105,15 +105,12 @@ mruby-static:
 
   class Template
     def initialize
-      @renderer = Discount.new(
-        Static.configuration.css, Static.configuration.site_name)
+      @renderer = Markdown::Markdown.new
     end
 
     def render &block
       output = []
-      output << @renderer.header
-      output << yield if block_given?
-      output << @renderer.footer
+      output << @renderer.render(yield)
       output.join("")
     end
   end
@@ -177,7 +174,7 @@ mruby-static:
 
     def to_html
       "" << @template.render do
-        body.to_html
+        body
       end
     end
 
