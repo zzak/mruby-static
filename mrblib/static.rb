@@ -41,7 +41,7 @@ module Static
   def self.help!
     puts <<-EOS
 mruby-static:
-  preview, preview:run to preview your site
+  preview:run to preview your site
   post:new to create a new post
     EOS
   end
