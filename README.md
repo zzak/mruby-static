@@ -15,15 +15,10 @@ A simple, static, HTML site generator inspired by Jekyll.
 ## Getting Started
 
 1. Download the source: `git clone https://github.com/zzak/mruby-static`
-
 2. Build inside docker with `docker-compose run compile`
-
 3. Install binary to your PATH (i.e.: `mruby/build/<ARCH>/bin/mruby-static`)
-
 4. Create a `site.rb` file (See below).
-
 5. Generate a post: `mruby-static post:new "The Title Of My Post"`
-
 6. Preview your site: `mruby-static preview:run`
 
 ## site.rb
