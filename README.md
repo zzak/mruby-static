@@ -10,7 +10,6 @@ A simple, static, HTML site generator inspired by Jekyll.
 * Write content in markdown
 * Built-in web server for previews
 * TODO:Templates written in ERB
-* Easily generating pages and posts
 
 ## Getting Started
 
