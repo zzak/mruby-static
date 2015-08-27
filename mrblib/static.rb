@@ -22,15 +22,15 @@ module Static
     attr_accessor :configuration
 
     private
-    def parse_command!
-      command = ARGV.shift
+    def parse_command!(argv)
+      command = argv.shift
       if command =~ /\w+:\w+/
         klass, action = command.split(":")
       else
-        raise "unknown command."
+        raise ArgumentError, "unknown command."
       end
 
-      Static.const_get(klass.capitalize).new.send(action)
+      Static.const_get(klass.capitalize).new.send(action, *argv)
     end
   end
 
@@ -42,9 +42,9 @@ mruby-static:
     EOS
   end
 
-  def self.start
+  def self.start(argv)
     begin
-      parse_command!
+      parse_command!(argv)
     rescue ArgumentError
       help!
     end
@@ -53,10 +53,10 @@ mruby-static:
   class Post
     attr_accessor :document
 
-    def new
+    def new(*args)
       @document = Document.new
       @document.body = "Your content here."
-      @document.title = ARGV.shift
+      @document.title = args.shift
 
       @document.save!
     end
@@ -182,4 +182,9 @@ mruby-static:
       end
     end
   end
+end
+
+def __main__(argv)
+  argv.shift # remove binary from args
+  Static.start(argv)
 end

@@ -1,37 +1,67 @@
-STATIC_ROOT=ENV["STATIC_ROOT"] || Dir.pwd
-MRUBY_ROOT=ENV["MRUBY_ROOT"] || "#{STATIC_ROOT}/mruby"
-MRUBY_CONFIG=File.expand_path(ENV["MRUBY_CONFIG"] || "build_config.rb")
-INSTALL_PREFIX=ENV["INSTALL_PREFIX"] || "#{STATIC_ROOT}/build"
-MRUBY_VERSION=ENV["MRUBY_VERSION"] || "1.1.0"
-
 file :mruby do
-  sh "wget --no-check-certificate -O mruby.tar.gz https://github.com/mruby/mruby/archive/#{MRUBY_VERSION}.tar.gz"
-  sh "tar -xvzf mruby.tar.gz"
-  sh "rm mruby.tar.gz"
-  sh "mv mruby-#{MRUBY_VERSION} #{MRUBY_ROOT}"
+  sh "git clone --depth=1 https://github.com/mruby/mruby"
 end
+
+APP_NAME=ENV["APP_NAME"] || "mruby-static"
+APP_ROOT=ENV["APP_ROOT"] || Dir.pwd
+# avoid redefining constants in mruby Rakefile
+mruby_root=File.expand_path(ENV["MRUBY_ROOT"] || "#{APP_ROOT}/mruby")
+mruby_config=File.expand_path(ENV["MRUBY_CONFIG"] || "build_config.rb")
+ENV['MRUBY_ROOT'] = mruby_root
+ENV['MRUBY_CONFIG'] = mruby_config
+Rake::Task[:mruby].invoke unless Dir.exist?(mruby_root)
+Dir.chdir(mruby_root)
+load "#{mruby_root}/Rakefile"
 
 desc "compile binary"
-task :compile => :mruby do
-  sh "cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} rake all"
-  sh "cp -p #{MRUBY_ROOT}/bin/mruby #{STATIC_ROOT}/bin/static"
+task :compile => [:all] do
+  %W(#{mruby_root}/build/x86_64-pc-linux-gnu/bin/#{APP_NAME} #{mruby_root}/build/i686-pc-linux-gnu/#{APP_NAME}").each do |bin|
+    sh "strip --strip-unneeded #{bin}" if File.exist?(bin)
+  end
 end
 
-desc "test"
-task :test => :mruby do
-  sh "cd #{MRUBY_ROOT} && MRUBY_CONFIG=#{MRUBY_CONFIG} rake all test"
+namespace :test do
+  desc "run mruby & unit tests"
+  # only build mtest for host
+  task :mtest => [:compile] + MRuby.targets.values.map {|t| t.build_mrbtest_lib_only? ? nil : t.exefile("#{t.build_dir}/test/mrbtest") }.compact do
+    # mruby-io tests expect to be in mruby_root
+    # in order to get mruby/test/t/synatx.rb __FILE__ to pass,
+    # we need to make sure the tests are built relative from mruby_root
+    load "#{mruby_root}/test/mrbtest.rake"
+    MRuby.each_target do |target|
+      # only run unit tests here
+      target.enable_bintest = false
+      run_test unless build_mrbtest_lib_only?
+    end
+  end
+
+  def clean_env(envs)
+    old_env = {}
+    envs.each do |key|
+      old_env[key] = ENV[key]
+      ENV[key] = nil
+    end
+    yield
+    envs.each do |key|
+      ENV[key] = old_env[key]
+    end
+  end
+
+  desc "run integration tests"
+  task :bintest => :compile do
+    MRuby.each_target do |target|
+      clean_env(%w(MRUBY_ROOT MRUBY_CONFIG)) do
+        run_bintest if bintest_enabled?
+      end
+    end
+  end
 end
 
-desc "install"
-task :install => :compile do
-  sh "mkdir -p #{INSTALL_PREFIX}/bin"
-  sh "cp -p #{STATIC_ROOT}/bin/static #{INSTALL_PREFIX}/bin/."
-end
+desc "run all tests"
+Rake::Task['test'].clear
+task :test => ["test:mtest", "test:bintest"]
 
 desc "cleanup"
 task :clean do
-  sh "rm #{STATIC_ROOT}/bin/static"
-  sh "cd #{MRUBY_ROOT} && rake deep_clean"
+  sh "rake deep_clean"
 end
-
-task :default => :test
