@@ -119,7 +119,7 @@ mruby-static:
 
   class Template
     def initialize
-      @renderer = Markdown::Markdown.new
+      @renderer = Markdown::Markdown.new(:fenced_code => true)
     end
 
     def render &block
