@@ -32,6 +32,10 @@ module Static
 
       Static.const_get(klass.capitalize).new.send(action, *argv)
     end
+
+    def read_config!
+      eval File.read("site.rb")
+    end
   end
 
   def self.help!
@@ -43,6 +47,8 @@ mruby-static:
   end
 
   def self.start(argv)
+    read_config!
+
     begin
       parse_command!(argv)
     rescue ArgumentError
