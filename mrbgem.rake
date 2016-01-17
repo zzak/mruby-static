@@ -9,6 +9,5 @@ MRuby::Gem::Specification.new('mruby-static') do |spec|
   spec.add_dependency 'mruby-eval', :core => 'mruby-eval'
   spec.add_dependency 'mruby-string-ext', core: 'mruby-string-ext'
   spec.add_dependency 'mruby-markdown', :github => 'KeizoBookman/mruby-markdown', :branch => 'update_latest'
-  spec.add_dependency 'mruby-onig-regexp', :github => 'hone/mruby-onig-regexp'#:mgem => 'mruby-onig-regexp'
   spec.add_dependency 'mruby-simplehttpserver', :mgem => 'mruby-simplehttpserver'
 end

@@ -29,13 +29,12 @@ module Static
     private
     def parse_command!(argv)
       command = argv.shift
-      if command =~ /\w+:\w+/
-        klass, action = command.split(":")
+      klass, action = command.split(":")
+      if klass && action
+        Static.const_get(klass.capitalize).new.send(action, *argv)
       else
         raise ArgumentError, "unknown command."
       end
-
-      Static.const_get(klass.capitalize).new.send(action, *argv)
     end
 
     def read_config!
@@ -154,7 +153,8 @@ mruby-static:
 
     def self.routes
       @routes ||= Dir.entries(Static.configuration.root).select do |file|
-        file =~ /.+.md/
+        dots = file.split(".")
+        dots.last == "md"
       end
     end
 
