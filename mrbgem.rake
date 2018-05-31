@@ -4,7 +4,7 @@ MRuby::Gem::Specification.new('mruby-static') do |spec|
   spec.summary = 'Static HTML Site Generator'
   spec.bins = ["mruby-static"]
 
-  spec.add_dependency 'mruby-io', :mgem => 'mruby-io'
+  spec.add_dependency 'mruby-io', :core => 'mruby-io'
   spec.add_dependency 'mruby-dir', :mgem => 'mruby-dir'
   spec.add_dependency 'mruby-eval', :core => 'mruby-eval'
   spec.add_dependency 'mruby-string-ext', core: 'mruby-string-ext'
